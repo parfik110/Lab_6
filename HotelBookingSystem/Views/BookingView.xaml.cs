@@ -1,5 +1,8 @@
-﻿using HotelBookingSystem.ViewModels;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -10,17 +13,16 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace HotelBookingSystem
+namespace HotelBookingSystem.Views
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for BookingView.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class BookingView : UserControl
     {
-        public MainWindow()
+        public BookingView()
         {
             InitializeComponent();
-            DataContext = new BookingViewModel();
         }
     }
 }

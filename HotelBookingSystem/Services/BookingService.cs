@@ -10,12 +10,10 @@ namespace HotelBookingSystem.Services
     public class BookingService
     {
         private readonly IBookingRepository _repository;
-        private int _nextBookingId;
 
         public BookingService(IBookingRepository repository)
         {
             _repository = repository;
-            _nextBookingId = _repository.GetAll().Any() ? _repository.GetAll().Max(b => b.Id) + 1 : 1;
         }
 
         public Booking CreateBooking(int roomId, int guestId, DateTime checkIn, DateTime checkOut)
@@ -23,9 +21,11 @@ namespace HotelBookingSystem.Services
             if (!IsRoomAvailable(roomId, checkIn, checkOut))
                 throw new InvalidOperationException("Room is not available");
 
+            var nextId = GetNextBookingId();
+
             var booking = new Booking
             {
-                Id = _nextBookingId++,
+                Id = nextId,
                 RoomId = roomId,
                 GuestId = guestId,
                 CheckInDate = checkIn,
@@ -58,6 +58,12 @@ namespace HotelBookingSystem.Services
             _repository.GetAll().Where(b => b.RoomId == roomId).ToList();
 
         public List<Booking> GetAllBookings() => _repository.GetAll();
+
+        private int GetNextBookingId()
+        {
+            var all = _repository.GetAll();
+            return all.Any() ? all.Max(b => b.Id) + 1 : 1;
+        }
     }
 
 }
