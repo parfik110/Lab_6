@@ -1,0 +1,35 @@
+﻿<UserControl x:Class="HotelBookingSystem.Views.BookingView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:HotelBookingSystem.ViewModels">
+
+    <Grid Margin="20">
+        <StackPanel>
+            <TextBlock Text="Оберіть кімнату:"/>
+            <ComboBox ItemsSource="{Binding Rooms}"
+                      SelectedValuePath="Id"
+                      DisplayMemberPath="Number"
+                      SelectedValue="{Binding SelectedRoomId}"/>
+
+            <TextBlock Text="Дата заїзду:"/>
+            <DatePicker SelectedDate="{Binding CheckInDate}"/>
+
+            <TextBlock Text="Дата виїзду:"/>
+            <DatePicker SelectedDate="{Binding CheckOutDate}"/>
+
+            <Button Content="Забронювати"
+                    Command="{Binding BookRoomCommand}"
+                    Margin="0,10,0,0"/>
+
+            <TextBlock Text="Список бронювань:" Margin="0,20,0,5"/>
+            <ListBox ItemsSource="{Binding Bookings}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Path=Id, StringFormat='Бронювання #{0}'}"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </StackPanel>
+    </Grid>
+</UserControl>
+ 
