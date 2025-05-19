@@ -11,15 +11,17 @@ namespace HotelBookingSystem.Factories
     public class ViewModelFactory
     {
         private readonly BookingService _bookingService;
+        private readonly ILogger _logger;
 
-        public ViewModelFactory(BookingService bookingService)
+        public ViewModelFactory(BookingService bookingService, ILogger logger)
         {
             _bookingService = bookingService;
+            _logger = logger;
         }
 
         public BookingViewModel CreateBookingViewModel()
         {
-            return new BookingViewModel(_bookingService);
+            return new BookingViewModel(_bookingService, _logger);
         }
     }
 }

@@ -28,6 +28,7 @@ namespace HotelBookingSystem.Repositories
         public void Add(Booking booking)
         {
             _bookings.Add(booking);
+            Save();
         }
 
         public void Delete(int id)
