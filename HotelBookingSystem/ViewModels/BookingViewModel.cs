@@ -24,16 +24,15 @@ namespace HotelBookingSystem.ViewModels
 
         private readonly BookingService _bookingService;
 
-        public BookingViewModel()
+        public BookingViewModel(BookingService bookingService)
         {
-            Rooms = new ObservableCollection<Room>
-        {
-            new Room { Id = 1, Number = "101", Type = "Standard" },
-            new Room { Id = 2, Number = "102", Type = "Deluxe" }
-        };
+            _bookingService = bookingService;
 
-            var repo = new JsonBookingRepository();
-            _bookingService = new BookingService(repo);
+            Rooms = new ObservableCollection<Room>
+            {
+                new Room { Id = 1, Number = "101", Type = "Standard" },
+                new Room { Id = 2, Number = "102", Type = "Deluxe" }
+            };
 
             Bookings = new ObservableCollection<Booking>(_bookingService.GetAllBookings());
 
@@ -42,9 +41,16 @@ namespace HotelBookingSystem.ViewModels
 
         private void BookRoom()
         {
-            var booking = _bookingService.CreateBooking(SelectedRoomId, 1, CheckInDate, CheckOutDate); // GuestId=1 for demo
-            Bookings.Add(booking);
-            OnPropertyChanged(nameof(Bookings));
+            try
+            {
+                var booking = _bookingService.CreateBooking(SelectedRoomId, 1, CheckInDate, CheckOutDate);
+                Bookings.Add(booking);
+                OnPropertyChanged(nameof(Bookings));
+            }
+            catch (Exception)
+            {
+                // Логування або обробка помилки тут
+            }
         }
 
         private bool CanBook()

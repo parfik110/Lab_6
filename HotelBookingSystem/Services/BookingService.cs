@@ -1,4 +1,5 @@
 ﻿using HotelBookingSystem.Models;
+using HotelBookingSystem.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,11 +11,15 @@ namespace HotelBookingSystem.Services
     public class BookingService
     {
         private readonly IBookingRepository _repository;
+        private List<Booking> _allBookings;
 
         public BookingService(IBookingRepository repository)
         {
             _repository = repository;
+            _allBookings = _repository.GetAll().ToList();
         }
+        
+
 
         public Booking CreateBooking(int roomId, int guestId, DateTime checkIn, DateTime checkOut)
         {
@@ -41,7 +46,7 @@ namespace HotelBookingSystem.Services
             var existing = _repository.GetAll().FirstOrDefault(b => b.Id == bookingId);
             if (existing == null) return false;
 
-            _repository.Remove(bookingId);
+            _repository.Delete(bookingId);
             return true;
         }
 
@@ -57,7 +62,12 @@ namespace HotelBookingSystem.Services
         public List<Booking> GetBookingsForRoom(int roomId) =>
             _repository.GetAll().Where(b => b.RoomId == roomId).ToList();
 
-        public List<Booking> GetAllBookings() => _repository.GetAll();
+
+        public List<Booking> GetAllBookings()
+        {
+            return _repository.GetAll().ToList();
+        }
+
 
         private int GetNextBookingId()
         {

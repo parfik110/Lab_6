@@ -1,14 +1,14 @@
-﻿using System.Configuration;
-using System.Data;
+﻿using HotelBookingSystem.DI;
+using HotelBookingSystem.Factories;
+using HotelBookingSystem.Repositories;
+using HotelBookingSystem.Services;
+using HotelBookingSystem.ViewModels;
 using System.Windows;
 
 namespace HotelBookingSystem
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
     public partial class App : Application
     {
+        
     }
-
 }
