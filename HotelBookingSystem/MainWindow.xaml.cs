@@ -1,26 +1,30 @@
 ﻿using HotelBookingSystem.ViewModels;
-using System.Text;
+using HotelBookingSystem.Repositories;
+using HotelBookingSystem.Services;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using HotelBookingSystem.DI;
+using HotelBookingSystem.Factories;
 
 namespace HotelBookingSystem
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new BookingViewModel();
+
+            // Налаштування DI
+            var serviceProvider = new SimpleServiceProvider();
+
+            serviceProvider.Register<IBookingRepository>(() => new JsonBookingRepository());
+            serviceProvider.Register<BookingService>(() => new BookingService(serviceProvider.Resolve<IBookingRepository>()));
+
+            var bookingService = serviceProvider.Resolve<BookingService>();
+            var viewModelFactory = new ViewModelFactory(bookingService);
+            var bookingViewModel = viewModelFactory.CreateBookingViewModel();
+
+            // Прив’язуємо ViewModel до вікна
+            DataContext = bookingViewModel;
         }
     }
 }

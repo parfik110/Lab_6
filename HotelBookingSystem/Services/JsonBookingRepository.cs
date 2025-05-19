@@ -1,53 +1,46 @@
 ﻿using HotelBookingSystem.Models;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
-namespace HotelBookingSystem.Services
+namespace HotelBookingSystem.Repositories
 {
     public class JsonBookingRepository : IBookingRepository
     {
-        private readonly string _filePath = "bookings.json";
+        private const string FilePath = "bookings.json";
         private List<Booking> _bookings;
 
         public JsonBookingRepository()
         {
-            _bookings = LoadFromFile();
+            if (File.Exists(FilePath))
+            {
+                var json = File.ReadAllText(FilePath);
+                _bookings = JsonSerializer.Deserialize<List<Booking>>(json) ?? new List<Booking>();
+            }
+            else
+            {
+                _bookings = new List<Booking>();
+            }
         }
 
-        public List<Booking> GetAll() => _bookings;
+        public IEnumerable<Booking> GetAll() => _bookings;
 
         public void Add(Booking booking)
         {
             _bookings.Add(booking);
-            Save();
         }
 
-        public void Remove(int bookingId)
+        public void Delete(int id)
         {
-            var booking = _bookings.FirstOrDefault(b => b.Id == bookingId);
+            var booking = _bookings.Find(b => b.Id == id);
             if (booking != null)
-            {
                 _bookings.Remove(booking);
-                Save();
-            }
         }
 
         public void Save()
         {
-            var json = JsonSerializer.Serialize(_bookings, new JsonSerializerOptions { WriteIndented = true });
-            File.WriteAllText(_filePath, json);
-        }
-
-        private List<Booking> LoadFromFile()
-        {
-            if (!File.Exists(_filePath)) return new List<Booking>();
-            var json = File.ReadAllText(_filePath);
-            return JsonSerializer.Deserialize<List<Booking>>(json) ?? new List<Booking>();
+            var json = JsonSerializer.Serialize(_bookings);
+            File.WriteAllText(FilePath, json);
         }
     }
 }
