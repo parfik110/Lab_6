@@ -43,5 +43,22 @@ namespace HotelBookingSystem.Repositories
             var json = JsonSerializer.Serialize(_bookings);
             File.WriteAllText(FilePath, json);
         }
+
+        public void Update(Booking booking)
+        {
+            var existing = _bookings.FirstOrDefault(b => b.Id == booking.Id);
+            if (existing != null)
+            {
+                existing.RoomId = booking.RoomId;
+                existing.CheckInDate = booking.CheckInDate;
+                existing.CheckOutDate = booking.CheckOutDate;
+            }
+        }
+
+        public Booking? GetById(int id)
+        {
+            return _bookings.FirstOrDefault(b => b.Id == id);
+        }
+
     }
 }

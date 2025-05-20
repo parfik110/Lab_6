@@ -13,5 +13,11 @@ namespace HotelBookingSystem.Models
         public int GuestId { get; set; }
         public DateTime CheckInDate { get; set; }
         public DateTime CheckOutDate { get; set; }
+
+        public override string ToString()
+        {
+            return $"Booking ID: {Id}, Room: {RoomId}, From: {CheckInDate:dd.MM.yyyy}, To: {CheckOutDate:dd.MM.yyyy}";
+        }
+
     }
 }

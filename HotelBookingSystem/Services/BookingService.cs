@@ -74,6 +74,20 @@ namespace HotelBookingSystem.Services
         public List<Booking> GetAllBookings() =>
             _repository.GetAll().ToList();
 
+        public void EditBooking(int id, int roomId, DateTime checkIn, DateTime checkOut)
+        {
+            var booking = _repository.GetById(id);
+            if (booking != null)
+            {
+                booking.RoomId = roomId;
+                booking.CheckInDate = checkIn;
+                booking.CheckOutDate = checkOut;
+                _repository.Update(booking);
+                _repository.Save();
+                _logger.LogInfo($"Booking {id} updated.");
+            }
+        }
+
         private int GetNextBookingId()
         {
             var all = _repository.GetAll();

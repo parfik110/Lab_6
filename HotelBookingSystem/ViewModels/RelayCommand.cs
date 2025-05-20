@@ -28,5 +28,7 @@ namespace HotelBookingSystem.ViewModels
         {
             CanExecuteChanged?.Invoke(this, EventArgs.Empty);
         }
+
+
     }
 }
