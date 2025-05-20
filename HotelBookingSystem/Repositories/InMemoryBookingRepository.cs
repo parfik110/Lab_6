@@ -13,13 +13,31 @@ namespace HotelBookingSystem.Repositories
 
         public void Delete(int id)
         {
-            var booking = _bookings.Find(b => b.Id == id);
+            var booking = _bookings.FirstOrDefault(b => b.Id == id);
             if (booking != null)
                 _bookings.Remove(booking);
         }
 
+
         public void Save()
         {
+        }
+
+        public void Update(Booking booking)
+        {
+            var existing = _bookings.FirstOrDefault(b => b.Id == booking.Id);
+            if (existing != null)
+            {
+                existing.RoomId = booking.RoomId;
+                existing.GuestId = booking.GuestId;
+                existing.CheckInDate = booking.CheckInDate;
+                existing.CheckOutDate = booking.CheckOutDate;
+            }
+        }
+
+        public Booking? GetById(int id)
+        {
+            return _bookings.FirstOrDefault(b => b.Id == id);
         }
     }
 }
