@@ -7,9 +7,10 @@
         <StackPanel>
             <TextBlock Text="Оберіть кімнату:"/>
             <ComboBox ItemsSource="{Binding Rooms}"
-                      SelectedValuePath="Id"
-                      DisplayMemberPath="Number"
-                      SelectedValue="{Binding SelectedRoomId}"/>
+          SelectedValuePath="Id"
+          DisplayMemberPath="Number"
+          SelectedValue="{Binding SelectedRoomId, Mode=TwoWay}"/>
+
 
             <TextBlock Text="Дата заїзду:"/>
             <DatePicker SelectedDate="{Binding CheckInDate}"/>
@@ -37,7 +38,9 @@
                     Margin="0,10,0,0"/>
 
             <Button Content="Edit" Command="{Binding EditBookingCommand}" Width="80" Margin="5"/>
+            
 
         </StackPanel>
+        
     </Grid>
 </UserControl>

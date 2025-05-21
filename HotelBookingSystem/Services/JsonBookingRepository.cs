@@ -59,6 +59,14 @@ namespace HotelBookingSystem.Repositories
         {
             return _bookings.FirstOrDefault(b => b.Id == id);
         }
-
+        public IEnumerable<Room> GetRooms()
+        {
+            return new List<Room>
+        {
+            new Room { Id = 1, Number = "101" },
+            new Room { Id = 2, Number = "102" },
+            new Room { Id = 3, Number = "103" }
+        };
+        }
     }
 }
