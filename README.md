@@ -53,3 +53,4 @@
 - **Encapsulate Field** — властивості з [OnPropertyChanged](https://github.com/parfik110/Lab_6/blob/0e7dac5308fd83d8c99c11d06ececffd4c1656bb/HotelBookingSystem/ViewModels/BookingViewModel.cs#L31-L96) для MVVM.
 - **Introduce Command** — заміна обробників подій на команди.
 - **Simplify Conditionals** — спрощення умов у перевірках ([CanBookRoom](https://github.com/parfik110/Lab_6/blob/0e7dac5308fd83d8c99c11d06ececffd4c1656bb/HotelBookingSystem/ViewModels/BookingViewModel.cs#L210)).
+![Кількість рядків коду](https://github.com/user-attachments/assets/c927b089-b377-4f75-9a66-64729f10480b)
