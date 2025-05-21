@@ -93,5 +93,35 @@ namespace HotelBookingSystem.Services
             var all = _repository.GetAll();
             return all.Any() ? all.Max(b => b.Id) + 1 : 1;
         }
+
+        public IEnumerable<Booking> FilterBookings(DateTime? from = null, DateTime? to = null, int? roomId = null)
+        {
+            return _repository.GetAll().Where(b =>
+                (!from.HasValue || b.CheckInDate >= from.Value) &&
+                (!to.HasValue || b.CheckOutDate <= to.Value) &&
+                (!roomId.HasValue || b.RoomId == roomId.Value));
+        }
+
+        public void UpdateBooking(Booking updatedBooking)
+        {
+            if (updatedBooking.CheckInDate < DateTime.Today || updatedBooking.CheckOutDate <= updatedBooking.CheckInDate)
+                throw new ArgumentException("Invalid booking dates.");
+
+            // Перевірка на конфлікти
+            var allBookings = _repository.GetAll();
+            bool conflict = allBookings.Any(b =>
+                b.Id != updatedBooking.Id &&
+                b.RoomId == updatedBooking.RoomId &&
+                b.CheckInDate < updatedBooking.CheckOutDate &&
+                updatedBooking.CheckInDate < b.CheckOutDate);
+
+            if (conflict)
+                throw new InvalidOperationException("Booking conflicts with an existing reservation.");
+
+            _repository.Update(updatedBooking);
+            _repository.Save();
+        }
+
+
     }
 }
