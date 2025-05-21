@@ -7,6 +7,8 @@ namespace HotelBookingSystem.Repositories
     {
         private readonly List<Booking> _bookings = new();
 
+        
+
         public IEnumerable<Booking> GetAll() => _bookings;
 
         public void Add(Booking booking) => _bookings.Add(booking);
@@ -38,6 +40,11 @@ namespace HotelBookingSystem.Repositories
         public Booking? GetById(int id)
         {
             return _bookings.FirstOrDefault(b => b.Id == id);
+        }
+
+        public IEnumerable<Room> GetRooms()
+        {
+            throw new NotImplementedException();
         }
     }
 }

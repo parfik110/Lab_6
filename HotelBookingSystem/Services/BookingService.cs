@@ -122,6 +122,9 @@ namespace HotelBookingSystem.Services
             _repository.Save();
         }
 
-
+        public IEnumerable<Room> GetAvailableRooms()
+        {
+            return _repository.GetRooms();
+        }
     }
 }

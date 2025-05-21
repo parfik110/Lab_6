@@ -3,7 +3,15 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:view="clr-namespace:HotelBookingSystem.Views"
         Title="Hotel Booking System" Height="450" Width="800">
-    <Grid>
-        <view:BookingView />
-    </Grid>
+    <DockPanel>
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="5">
+            <Button x:Name="LoginButton" Content="Login" Width="75" Margin="5" Click="LoginButton_Click"/>
+            <Button x:Name="RegisterButton" Content="Register" Width="75" Margin="5" Click="RegisterButton_Click"/>
+            <TextBlock x:Name="WelcomeText" VerticalAlignment="Center" Margin="20,0,0,0" FontWeight="Bold" />
+        </StackPanel>
+
+        <Grid x:Name="MainContentGrid" IsEnabled="False">
+            <view:BookingView />
+        </Grid>
+    </DockPanel>
 </Window>
