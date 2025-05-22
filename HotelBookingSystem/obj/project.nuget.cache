@@ -1,11 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "a7ulanxAIEA=",
+  "dgSpecHash": "+umRxMNrqtKjlXguaMzTGlnplmZnunEt8DgZ8tMiAH0u0+w+dhHuZZ9neob65WBLZymn+ViSZdmB2mmKndgkIw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\ADMIN\\Desktop\\University\\2\\KPZ - proga\\HotelBookingSystem\\HotelBookingSystem\\HotelBookingSystem.csproj",
-  "expectedPackageFiles": [
-    "C:\\Users\\ADMIN\\.nuget\\packages\\refractored.mvvmhelpers\\1.6.2\\refractored.mvvmhelpers.1.6.2.nupkg.sha512",
-    "C:\\Users\\ADMIN\\.nuget\\packages\\system.valuetuple\\4.5.0\\system.valuetuple.4.5.0.nupkg.sha512"
-  ],
+  "projectFilePath": "C:\\Users\\masha\\2 курс\\2 семестр\\MKR2\\Lab_6_fork\\HotelBookingSystem\\HotelBookingSystem.csproj",
+  "expectedPackageFiles": [],
   "logs": []
 }

@@ -10,16 +10,22 @@ namespace HotelBookingSystem.Services
     {
         private readonly IBookingRepository _repository;
         private readonly ILogger _logger;
+        private readonly IAvailabilityStrategy _availabilityStrategy;
 
-        public BookingService(IBookingRepository repository, ILogger logger)
+        public BookingService(
+            IBookingRepository repository,
+            ILogger logger,
+            IAvailabilityStrategy availabilityStrategy)
         {
             _repository = repository;
             _logger = logger;
+            _availabilityStrategy = availabilityStrategy;
         }
 
         public Booking CreateBooking(int roomId, int guestId, DateTime checkIn, DateTime checkOut)
         {
-            if (!IsRoomAvailable(roomId, checkIn, checkOut))
+            var existingBookings = _repository.GetAll();
+            if (!_availabilityStrategy.IsRoomAvailable(roomId, checkIn, checkOut, existingBookings))
             {
                 _logger.LogError($"Failed booking attempt: Room {roomId} not available from {checkIn:d} to {checkOut:d}");
                 throw new InvalidOperationException("Room is not available");
@@ -59,15 +65,6 @@ namespace HotelBookingSystem.Services
             return true;
         }
 
-        public bool IsRoomAvailable(int roomId, DateTime from, DateTime to)
-        {
-            return !_repository.GetAll().Any(b =>
-                b.RoomId == roomId &&
-                b.CheckInDate < to &&
-                from < b.CheckOutDate
-            );
-        }
-
         public List<Booking> GetBookingsForRoom(int roomId) =>
             _repository.GetAll().Where(b => b.RoomId == roomId).ToList();
 
@@ -104,16 +101,12 @@ namespace HotelBookingSystem.Services
 
         public void UpdateBooking(Booking updatedBooking)
         {
-            if (updatedBooking.CheckInDate < DateTime.Today || updatedBooking.CheckOutDate <= updatedBooking.CheckInDate)
-                throw new ArgumentException("Invalid booking dates.");
-
-            // Перевірка на конфлікти
             var allBookings = _repository.GetAll();
-            bool conflict = allBookings.Any(b =>
-                b.Id != updatedBooking.Id &&
-                b.RoomId == updatedBooking.RoomId &&
-                b.CheckInDate < updatedBooking.CheckOutDate &&
-                updatedBooking.CheckInDate < b.CheckOutDate);
+            bool conflict = !_availabilityStrategy.IsRoomAvailable(
+                updatedBooking.RoomId,
+                updatedBooking.CheckInDate,
+                updatedBooking.CheckOutDate,
+                allBookings.Where(b => b.Id != updatedBooking.Id));
 
             if (conflict)
                 throw new InvalidOperationException("Booking conflicts with an existing reservation.");
