@@ -1,70 +1,69 @@
 ﻿using HotelBookingSystem.Models;
-using HotelBookingSystem.Services;
 using System.IO;
 using System.Text.Json;
 using System.Security.Cryptography;
 using System.Text;
 
-public class GuestService : IGuestService
+namespace HotelBookingSystem.Services
 {
-    private const string FilePath = "guests.json";
-    private List<Guest> _guests;
-
-    public GuestService()
+    public class GuestService : IGuestService
     {
-        if (File.Exists(FilePath))
+        private const string FilePath = "guests.json";
+        private readonly List<Guest> _guests;
+
+        public GuestService()
         {
-            var json = File.ReadAllText(FilePath);
-            _guests = JsonSerializer.Deserialize<List<Guest>>(json) ?? new List<Guest>();
+            _guests = LoadGuests();
         }
-        else
+
+        public Guest? Authenticate(string username, string password)
         {
-            _guests = new List<Guest>();
+            var hashedPassword = HashPassword(password);
+            return _guests.FirstOrDefault(g => g.Username == username && g.PasswordHash == hashedPassword);
         }
-    }
 
-    public Guest? Authenticate(string username, string password)
-    {
-        var hashed = HashPassword(password);
-        return _guests.FirstOrDefault(g => g.Username == username && g.PasswordHash == hashed);
-    }
-
-    public void Register(string fullName, string email, string phone, string username, string password)
-    {
-        if (_guests.Any(g => g.Username == username))
-            throw new Exception("Користувач з таким логіном вже існує.");
-
-        var newGuest = new Guest
+        public void Register(string fullName, string email, string phone, string username, string password)
         {
-            Id = _guests.Count > 0 ? _guests.Max(g => g.Id) + 1 : 1,
-            FullName = fullName,
-            Email = email,
-            PhoneNumber = phone,
-            Username = username,
-            PasswordHash = HashPassword(password),
-            Role = "Guest"
-        };
+            if (_guests.Any(g => g.Username == username))
+                throw new Exception("User with this username already exists.");
 
-        _guests.Add(newGuest);
-        Save();
-    }
+            var newGuest = new Guest
+            {
+                Id = _guests.Count > 0 ? _guests.Max(g => g.Id) + 1 : 1,
+                FullName = fullName,
+                Email = email,
+                PhoneNumber = phone,
+                Username = username,
+                PasswordHash = HashPassword(password),
+                Role = "Guest"
+            };
 
-    public Guest? GetByUsername(string username)
-    {
-        return _guests.FirstOrDefault(g => g.Username == username);
-    }
+            _guests.Add(newGuest);
+            SaveData();
+        }
 
-    private void Save()
-    {
-        var json = JsonSerializer.Serialize(_guests, new JsonSerializerOptions { WriteIndented = true });
-        File.WriteAllText(FilePath, json);
-    }
+        public Guest? GetByUsername(string username) => 
+            _guests.FirstOrDefault(g => g.Username == username);
 
-    private string HashPassword(string password)
-    {
-        using var sha = SHA256.Create();
-        var bytes = Encoding.UTF8.GetBytes(password);
-        var hash = sha.ComputeHash(bytes);
-        return Convert.ToBase64String(hash);
+        private List<Guest> LoadGuests()
+        {
+            return File.Exists(FilePath) 
+                ? JsonSerializer.Deserialize<List<Guest>>(File.ReadAllText(FilePath)) ?? new List<Guest>()
+                : new List<Guest>();
+        }
+
+        private void SaveData()
+        {
+            var options = new JsonSerializerOptions { WriteIndented = true };
+            File.WriteAllText(FilePath, JsonSerializer.Serialize(_guests, options));
+        }
+
+        private static string HashPassword(string password)
+        {
+            using var sha = SHA256.Create();
+            var bytes = Encoding.UTF8.GetBytes(password);
+            var hash = sha.ComputeHash(bytes);
+            return Convert.ToBase64String(hash);
+        }
     }
 }
