@@ -16,6 +16,15 @@ namespace HotelBookingSystem.Services
             _repository = repository;
             _logger = logger;
         }
+        private bool HasConflictingBookings(int roomId, DateTime checkIn, DateTime checkOut, int? excludeBookingId = null)
+        {
+            return _repository.GetAll().Any(b =>
+              b.RoomId == roomId &&
+              (!excludeBookingId.HasValue || b.Id != excludeBookingId.Value) &&
+              b.CheckInDate < checkOut &&
+              checkIn < b.CheckOutDate
+            );
+        }
 
         public Booking CreateBooking(int roomId, int guestId, DateTime checkIn, DateTime checkOut)
         {
@@ -61,11 +70,7 @@ namespace HotelBookingSystem.Services
 
         public bool IsRoomAvailable(int roomId, DateTime from, DateTime to)
         {
-            return !_repository.GetAll().Any(b =>
-                b.RoomId == roomId &&
-                b.CheckInDate < to &&
-                from < b.CheckOutDate
-            );
+            return !HasConflictingBookings(roomId, from, to);
         }
 
         public List<Booking> GetBookingsForRoom(int roomId) =>
@@ -107,24 +112,11 @@ namespace HotelBookingSystem.Services
             if (updatedBooking.CheckInDate < DateTime.Today || updatedBooking.CheckOutDate <= updatedBooking.CheckInDate)
                 throw new ArgumentException("Invalid booking dates.");
 
-            // Перевірка на конфлікти
-            var allBookings = _repository.GetAll();
-            bool conflict = allBookings.Any(b =>
-                b.Id != updatedBooking.Id &&
-                b.RoomId == updatedBooking.RoomId &&
-                b.CheckInDate < updatedBooking.CheckOutDate &&
-                updatedBooking.CheckInDate < b.CheckOutDate);
-
-            if (conflict)
+            if (HasConflictingBookings(updatedBooking.RoomId, updatedBooking.CheckInDate, updatedBooking.CheckOutDate, updatedBooking.Id))
                 throw new InvalidOperationException("Booking conflicts with an existing reservation.");
 
             _repository.Update(updatedBooking);
             _repository.Save();
-        }
-
-        public IEnumerable<Room> GetAvailableRooms()
-        {
-            return _repository.GetRooms();
         }
     }
 }
