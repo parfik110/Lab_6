@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\ADMIN\\Desktop\\University\\2\\KPZ - proga\\HotelBookingSystem\\HotelBookingSystem\\HotelBookingSystem.csproj": {}
+    "D:\\2_course\\KPZ\\mkr2\\Lab_6\\HotelBookingSystem\\HotelBookingSystem.csproj": {}
   },
   "projects": {
-    "C:\\Users\\ADMIN\\Desktop\\University\\2\\KPZ - proga\\HotelBookingSystem\\HotelBookingSystem\\HotelBookingSystem.csproj": {
+    "D:\\2_course\\KPZ\\mkr2\\Lab_6\\HotelBookingSystem\\HotelBookingSystem.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\ADMIN\\Desktop\\University\\2\\KPZ - proga\\HotelBookingSystem\\HotelBookingSystem\\HotelBookingSystem.csproj",
+        "projectUniqueName": "D:\\2_course\\KPZ\\mkr2\\Lab_6\\HotelBookingSystem\\HotelBookingSystem.csproj",
         "projectName": "HotelBookingSystem",
-        "projectPath": "C:\\Users\\ADMIN\\Desktop\\University\\2\\KPZ - proga\\HotelBookingSystem\\HotelBookingSystem\\HotelBookingSystem.csproj",
-        "packagesPath": "C:\\Users\\ADMIN\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\ADMIN\\Desktop\\University\\2\\KPZ - proga\\HotelBookingSystem\\HotelBookingSystem\\obj\\",
+        "projectPath": "D:\\2_course\\KPZ\\mkr2\\Lab_6\\HotelBookingSystem\\HotelBookingSystem.csproj",
+        "packagesPath": "C:\\Users\\MSI\\.nuget\\packages\\",
+        "outputPath": "D:\\2_course\\KPZ\\mkr2\\Lab_6\\HotelBookingSystem\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\ADMIN\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\MSI\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -50,6 +50,10 @@
         "net8.0-windows7.0": {
           "targetAlias": "net8.0-windows",
           "dependencies": {
+            "BCrypt.Net-Next": {
+              "target": "Package",
+              "version": "[4.0.3, )"
+            },
             "Refractored.MvvmHelpers": {
               "target": "Package",
               "version": "[1.6.2, )"

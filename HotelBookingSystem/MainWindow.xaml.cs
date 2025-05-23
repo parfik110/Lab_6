@@ -22,21 +22,35 @@ namespace HotelBookingSystem
             UpdateUIForLoggedOutState();
         }
 
+        private SimpleServiceProvider _serviceProvider;
+
         private void InitializeServicesAndViewModel()
         {
-            var serviceProvider = new SimpleServiceProvider();
+            _serviceProvider = new SimpleServiceProvider();
 
-            serviceProvider.Register<ILogger>(() => new FileLogger());
-            serviceProvider.Register<IBookingRepository>(() => new JsonBookingRepository());
-            serviceProvider.Register<BookingService>(() =>
-                new BookingService(
-                    serviceProvider.Resolve<IBookingRepository>(),
-                    serviceProvider.Resolve<ILogger>()
+            // Реєстрація логера та репозиторіїв
+            _serviceProvider.Register<ILogger>(() => new FileLogger());
+            _serviceProvider.Register<IBookingRepository>(() => new JsonBookingRepository());
+
+            // DI для AuthService
+            _serviceProvider.Register<IPasswordHasher>(() => new BCryptPasswordHasher());
+            _serviceProvider.Register<IGuestRepository>(() => new JsonGuestRepository());
+            _serviceProvider.Register<IAuthService>(() =>
+                new AuthService(
+                    _serviceProvider.Resolve<IGuestRepository>(),
+                    _serviceProvider.Resolve<IPasswordHasher>()
                 )
             );
 
-            var logger = serviceProvider.Resolve<ILogger>();
-            var bookingService = serviceProvider.Resolve<BookingService>();
+            _serviceProvider.Register<BookingService>(() =>
+                new BookingService(
+                    _serviceProvider.Resolve<IBookingRepository>(),
+                    _serviceProvider.Resolve<ILogger>()
+                )
+            );
+
+            var logger = _serviceProvider.Resolve<ILogger>();
+            var bookingService = _serviceProvider.Resolve<BookingService>();
             var viewModelFactory = new ViewModelFactory(bookingService, logger);
             var bookingViewModel = viewModelFactory.CreateBookingViewModel();
 
@@ -45,7 +59,8 @@ namespace HotelBookingSystem
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            var loginWindow = new LoginWindow();
+            var authService = _serviceProvider.Resolve<IAuthService>();
+            var loginWindow = new LoginWindow(authService);
             var result = loginWindow.ShowDialog();
 
             if (result == true && App.CurrentGuest != null)
@@ -63,10 +78,10 @@ namespace HotelBookingSystem
             }
         }
 
-
         private void RegisterButton_Click(object sender, RoutedEventArgs e)
         {
-            var registerWindow = new RegisterWindow();
+            var authService = _serviceProvider.Resolve<IAuthService>();
+            var registerWindow = new RegisterWindow(authService);
             registerWindow.ShowDialog();
         }
 
