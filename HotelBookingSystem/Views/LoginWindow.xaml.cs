@@ -6,12 +6,12 @@ namespace HotelBookingSystem.Views
 {
     public partial class LoginWindow : Window
     {
-        private readonly IGuestService _guestService;
+        private readonly IAuthService _authService;
 
-        public LoginWindow()
+        public LoginWindow(IAuthService authService)
         {
             InitializeComponent();
-            _guestService = new GuestService();
+            _authService = authService;
         }
 
         private void Login_Click(object sender, RoutedEventArgs e)
@@ -19,7 +19,7 @@ namespace HotelBookingSystem.Views
             var username = UsernameTextBox.Text;
             var password = PasswordBox.Password;
 
-            var guest = _guestService.Authenticate(username, password);
+            var guest = _authService.Authenticate(username, password);
 
             if (guest != null)
             {
@@ -36,7 +36,7 @@ namespace HotelBookingSystem.Views
 
         private void Register_Click(object sender, RoutedEventArgs e)
         {
-            var registerWindow = new RegisterWindow();
+            var registerWindow = new RegisterWindow(_authService);
             registerWindow.ShowDialog();
         }
     }

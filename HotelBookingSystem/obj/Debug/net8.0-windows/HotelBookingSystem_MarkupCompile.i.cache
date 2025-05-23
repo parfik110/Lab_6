@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-C:\Users\ADMIN\Desktop\University\2\KPZ - proga\HotelBookingSystem\HotelBookingSystem\obj\Debug\net8.0-windows\
+D:\2_course\KPZ\mkr2\Lab_6\HotelBookingSystem\obj\Debug\net8.0-windows\
 HotelBookingSystem
 none
 false
 TRACE;DEBUG;NET;NET8_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
-C:\Users\ADMIN\Desktop\University\2\KPZ - proga\HotelBookingSystem\HotelBookingSystem\App.xaml
+D:\2_course\KPZ\mkr2\Lab_6\HotelBookingSystem\App.xaml
 5408743726
 
-27-1002450108
-199-467462088
+31-728169559
+200-1263707462
 MainWindow.xaml;Views\BookingView.xaml;Views\EditBookingWindow.xaml;Views\LoginWindow.xaml;Views\RegisterWindow.xaml;
 
-True
+False
 

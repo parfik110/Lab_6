@@ -6,19 +6,19 @@ namespace HotelBookingSystem.Views
 {
     public partial class RegisterWindow : Window
     {
-        private readonly IGuestService _guestService;
+        private readonly IAuthService _authService;
 
-        public RegisterWindow()
+        public RegisterWindow(IAuthService authService)
         {
             InitializeComponent();
-            _guestService = new GuestService();
+            _authService = authService;
         }
 
         private void Register_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                _guestService.Register(
+                _authService.Register(
                     FullNameTextBox.Text,
                     EmailTextBox.Text,
                     PhoneTextBox.Text,

@@ -1,11 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "a7ulanxAIEA=",
+  "dgSpecHash": "/sTlns5RwlI=",
   "success": true,
-  "projectFilePath": "C:\\Users\\ADMIN\\Desktop\\University\\2\\KPZ - proga\\HotelBookingSystem\\HotelBookingSystem\\HotelBookingSystem.csproj",
+  "projectFilePath": "D:\\2_course\\KPZ\\mkr2\\Lab_6\\HotelBookingSystem\\HotelBookingSystem.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\ADMIN\\.nuget\\packages\\refractored.mvvmhelpers\\1.6.2\\refractored.mvvmhelpers.1.6.2.nupkg.sha512",
-    "C:\\Users\\ADMIN\\.nuget\\packages\\system.valuetuple\\4.5.0\\system.valuetuple.4.5.0.nupkg.sha512"
+    "C:\\Users\\MSI\\.nuget\\packages\\bcrypt.net-next\\4.0.3\\bcrypt.net-next.4.0.3.nupkg.sha512",
+    "C:\\Users\\MSI\\.nuget\\packages\\refractored.mvvmhelpers\\1.6.2\\refractored.mvvmhelpers.1.6.2.nupkg.sha512",
+    "C:\\Users\\MSI\\.nuget\\packages\\system.valuetuple\\4.5.0\\system.valuetuple.4.5.0.nupkg.sha512"
   ],
   "logs": []
 }

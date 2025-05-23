@@ -10,9 +10,9 @@ namespace HotelBookingSystem.DI
     {
         private readonly Dictionary<Type, Func<object>> _registrations = new();
 
-        public void Register<TService>(Func<object> factory)
+        public void Register<TService>(Func<TService> factory)
         {
-            _registrations[typeof(TService)] = factory;
+            _registrations[typeof(TService)] = () => factory();
         }
 
         public TService Resolve<TService>()
