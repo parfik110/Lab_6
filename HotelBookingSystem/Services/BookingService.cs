@@ -10,9 +10,16 @@ namespace HotelBookingSystem.Services
     {
         private readonly IBookingRepository _repository;
         private readonly ILogger _logger;
+        private readonly IAvailabilityStrategy _availabilityStrategy;
 
-        public BookingService(IBookingRepository repository, ILogger logger)
+        public BookingService(
+            IBookingRepository repository,
+            ILogger logger,
+            IAvailabilityStrategy availabilityStrategy)
         {
+            _repository = repository;
+            _logger = logger;
+            _availabilityStrategy = availabilityStrategy;
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -28,9 +35,13 @@ namespace HotelBookingSystem.Services
 
         public Booking CreateBooking(int roomId, int guestId, DateTime checkIn, DateTime checkOut)
         {
+            var existingBookings = _repository.GetAll();
+            if (!_availabilityStrategy.IsRoomAvailable(roomId, checkIn, checkOut, existingBookings))
+
             ValidateBookingDates(checkIn, checkOut);
             
             if (!IsRoomAvailable(roomId, checkIn, checkOut))
+
             {
                 _logger.LogError($"Failed booking attempt: Room {roomId} not available from {checkIn:d} to {checkOut:d}");
                 throw new InvalidOperationException("Room is not available");
@@ -68,6 +79,8 @@ namespace HotelBookingSystem.Services
             return true;
         }
 
+        public List<Booking> GetBookingsForRoom(int roomId) =>
+
         public bool IsRoomAvailable(int roomId, DateTime from, DateTime to)
         {
             return !HasConflictingBookings(roomId, from, to);
@@ -101,6 +114,14 @@ namespace HotelBookingSystem.Services
 
         private int GetNextBookingId()
         {
+            var allBookings = _repository.GetAll();
+            bool conflict = !_availabilityStrategy.IsRoomAvailable(
+                updatedBooking.RoomId,
+                updatedBooking.CheckInDate,
+                updatedBooking.CheckOutDate,
+                allBookings.Where(b => b.Id != updatedBooking.Id));
+
+            if (conflict)
             var all = _repository.GetAll();
             return all.Any() ? all.Max(b => b.Id) + 1 : 1;
         

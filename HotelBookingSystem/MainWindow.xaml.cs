@@ -28,10 +28,13 @@ namespace HotelBookingSystem
 
             serviceProvider.Register<ILogger>(() => new FileLogger());
             serviceProvider.Register<IBookingRepository>(() => new JsonBookingRepository());
+            serviceProvider.Register<IAvailabilityStrategy>(() =>
+                new StrictAvailabilityStrategy(serviceProvider.Resolve<ILogger>()));
             serviceProvider.Register<BookingService>(() =>
                 new BookingService(
                     serviceProvider.Resolve<IBookingRepository>(),
-                    serviceProvider.Resolve<ILogger>()
+                    serviceProvider.Resolve<ILogger>(),
+                    serviceProvider.Resolve<IAvailabilityStrategy>()
                 )
             );
 
