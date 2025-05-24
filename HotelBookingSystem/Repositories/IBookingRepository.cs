@@ -15,7 +15,6 @@ namespace HotelBookingSystem.Repositories
         void Delete(int id);
         void Save();
         Booking? GetById(int id);
-        IEnumerable<Room> GetRooms();
 
     }
 }
