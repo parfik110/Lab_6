@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace HotelBookingSystem.Services
 {
-    public class BookingService
+    public class BookingService : IBookingService
     {
         private readonly IBookingRepository _repository;
         private readonly ILogger _logger;
@@ -20,22 +20,36 @@ namespace HotelBookingSystem.Services
             _repository = repository;
             _logger = logger;
             _availabilityStrategy = availabilityStrategy;
+            _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        }
+        private bool HasConflictingBookings(int roomId, DateTime checkIn, DateTime checkOut, int? excludeBookingId = null)
+        {
+            return _repository.GetAll().Any(b =>
+              b.RoomId == roomId &&
+              (!excludeBookingId.HasValue || b.Id != excludeBookingId.Value) &&
+              b.CheckInDate < checkOut &&
+              checkIn < b.CheckOutDate
+            );
         }
 
         public Booking CreateBooking(int roomId, int guestId, DateTime checkIn, DateTime checkOut)
         {
             var existingBookings = _repository.GetAll();
             if (!_availabilityStrategy.IsRoomAvailable(roomId, checkIn, checkOut, existingBookings))
+
+            ValidateBookingDates(checkIn, checkOut);
+            
+            if (!IsRoomAvailable(roomId, checkIn, checkOut))
+
             {
                 _logger.LogError($"Failed booking attempt: Room {roomId} not available from {checkIn:d} to {checkOut:d}");
                 throw new InvalidOperationException("Room is not available");
             }
 
-            var nextId = GetNextBookingId();
-
             var booking = new Booking
             {
-                Id = nextId,
+                Id = GetNextBookingId(),
                 RoomId = roomId,
                 GuestId = guestId,
                 CheckInDate = checkIn,
@@ -52,7 +66,7 @@ namespace HotelBookingSystem.Services
 
         public bool CancelBooking(int bookingId)
         {
-            var existing = _repository.GetAll().FirstOrDefault(b => b.Id == bookingId);
+            var existing = _repository.GetById(bookingId);
             if (existing == null)
             {
                 _logger.LogError($"Attempt to cancel non-existing booking with ID {bookingId}");
@@ -66,29 +80,25 @@ namespace HotelBookingSystem.Services
         }
 
         public List<Booking> GetBookingsForRoom(int roomId) =>
-            _repository.GetAll().Where(b => b.RoomId == roomId).ToList();
 
-        public List<Booking> GetAllBookings() =>
-            _repository.GetAll().ToList();
-
-        public void EditBooking(int id, int roomId, DateTime checkIn, DateTime checkOut)
+        public bool IsRoomAvailable(int roomId, DateTime from, DateTime to)
         {
-            var booking = _repository.GetById(id);
-            if (booking != null)
-            {
-                booking.RoomId = roomId;
-                booking.CheckInDate = checkIn;
-                booking.CheckOutDate = checkOut;
-                _repository.Update(booking);
-                _repository.Save();
-                _logger.LogInfo($"Booking {id} updated.");
-            }
+            return !HasConflictingBookings(roomId, from, to);
         }
 
-        private int GetNextBookingId()
+        public List<Booking> GetBookingsForRoom(int roomId) => 
+            _repository.GetAll().Where(b => b.RoomId == roomId).ToList();
+
+        public List<Booking> GetAllBookings() => 
+            _repository.GetAll().ToList();
+
+        public void UpdateBooking(Booking updatedBooking)
         {
-            var all = _repository.GetAll();
-            return all.Any() ? all.Max(b => b.Id) + 1 : 1;
+            ValidateBookingDates(updatedBooking.CheckInDate, updatedBooking.CheckOutDate);
+            CheckForBookingConflicts(updatedBooking);
+
+            _repository.Update(updatedBooking);
+            _repository.Save();
         }
 
         public IEnumerable<Booking> FilterBookings(DateTime? from = null, DateTime? to = null, int? roomId = null)
@@ -99,7 +109,10 @@ namespace HotelBookingSystem.Services
                 (!roomId.HasValue || b.RoomId == roomId.Value));
         }
 
-        public void UpdateBooking(Booking updatedBooking)
+        public IEnumerable<Room> GetAvailableRooms() => 
+            _repository.GetRooms();
+
+        private int GetNextBookingId()
         {
             var allBookings = _repository.GetAll();
             bool conflict = !_availabilityStrategy.IsRoomAvailable(
@@ -109,15 +122,35 @@ namespace HotelBookingSystem.Services
                 allBookings.Where(b => b.Id != updatedBooking.Id));
 
             if (conflict)
-                throw new InvalidOperationException("Booking conflicts with an existing reservation.");
+            var all = _repository.GetAll();
+            return all.Any() ? all.Max(b => b.Id) + 1 : 1;
+        
+            if (updatedBooking.CheckInDate < DateTime.Today || updatedBooking.CheckOutDate <= updatedBooking.CheckInDate)
+                throw new ArgumentException("Invalid booking dates.");
 
-            _repository.Update(updatedBooking);
-            _repository.Save();
+            if (HasConflictingBookings(updatedBooking.RoomId, updatedBooking.CheckInDate, updatedBooking.CheckOutDate, updatedBooking.Id))
+                throw new InvalidOperationException("Booking conflicts with an existing reservation.");
+         }
+
+        private void ValidateBookingDates(DateTime checkIn, DateTime checkOut)
+        {
+            if (checkIn < DateTime.Today)
+                throw new ArgumentException("Check-in date cannot be in the past");
+                
+            if (checkOut <= checkIn)
+                throw new ArgumentException("Check-out date must be after check-in date");
         }
 
-        public IEnumerable<Room> GetAvailableRooms()
+        private void CheckForBookingConflicts(Booking booking)
         {
-            return _repository.GetRooms();
+            var conflictingBookings = _repository.GetAll()
+                .Where(b => b.Id != booking.Id &&
+                           b.RoomId == booking.RoomId &&
+                           b.CheckInDate < booking.CheckOutDate &&
+                           booking.CheckInDate < b.CheckOutDate);
+
+            if (conflictingBookings.Any())
+                throw new InvalidOperationException("Booking conflicts with an existing reservation.");
         }
     }
 }
